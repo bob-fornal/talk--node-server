@@ -4,7 +4,7 @@ let words = [];
 
 async function* generateData() {
   for (let i = 0; i < words.length; i++) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 250));
     yield `${words[i]}\n`;
   }
 }

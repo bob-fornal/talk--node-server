@@ -1,7 +1,7 @@
-const ws = require('ws');
+import { WebSocketServer } from 'ws';
 
-function init(httpServer) {
-  const wss = new ws.WebSocketServer({ noServer: true });
+export default function init(httpServer) {
+  const wss = new WebSocketServer({ noServer: true });
 
   wss.on('connection', function connection(ws) {
     ws.on('message', function message(data) {
@@ -17,5 +17,3 @@ function init(httpServer) {
     });
   });
 }
-
-module.exports = init;

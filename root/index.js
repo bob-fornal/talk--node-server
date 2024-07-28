@@ -1,9 +1,7 @@
-var path = require('path');
+import { join } from 'path';
 
-function init(app) {
+export default function init(app) {
   app.get('/', (request, response) => {
-    response.sendFile(path.join(__dirname,"index.html"));
+    response.sendFile(join(__dirname,"index.html"));
   });
 }
-
-module.exports = init;

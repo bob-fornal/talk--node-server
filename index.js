@@ -1,16 +1,17 @@
-require('dotenv').config();
-const express = require('express');
+import * as dotenv from 'dotenv';
+import express from 'express';
+import streamingInit from './streaming/index.js';
+import rootInit from './root/index.js';
+import wsInit from './websocket/index.js';
+
+dotenv.config();
+
 const app = express();
-
-const streamingInit = require('./streaming/index.js');
 streamingInit(app);
-
-const rootInit = require('./root/index.js');
 rootInit(app);
 
 const httpServer = app.listen(process.env.PORT || 10000, () => {
   console.log(`Server running at http://localhost:${process.env.PORT || 10000}/`);
 });
 
-const wsInit = require('./websocket/index.js');
 wsInit(httpServer);

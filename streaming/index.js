@@ -1,4 +1,9 @@
-const fs = require('node:fs/promises');
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let words = [];
 
@@ -11,14 +16,14 @@ async function* generateData() {
 
 async function openData() {
   try {
-    const data = await fs.readFile(`${__dirname}/streaming.txt`, { encoding: 'utf-8' });
+    const data = await readFile(`${__dirname}/streaming.txt`, { encoding: 'utf-8' });
     words = data.split('~~BREAK~~');
   } catch (error) {
     console.log(error);
   }
 }
 
-async function init(app) {
+export default async function init(app) {
   openData();
 
   app.get('/streaming', async (request, response) => {
@@ -29,11 +34,8 @@ async function init(app) {
   
     for await (const chunk of generateData()) {
       response.write(chunk);
-      console.log(`Sent: ${chunk}`);
     }
   
     response.end();
   });
 }
-
-module.exports = init;

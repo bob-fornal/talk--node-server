@@ -2,7 +2,9 @@ import { WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({ noServer: true });
 
-export default function init(httpServer) {
+let _projects;
+export default function init(httpServer, projects) {
+  _projects = projects;
   wss.on('connection', connection);
 
   httpServer.on('upgrade', (req, socket, head) => {
@@ -58,6 +60,5 @@ wss.on('close', function() {
 function isValid(message) {
   if (message.hasOwnProperty('type') === false) return false;
   if (message.hasOwnProperty('project') === false) return false;
-  if (message.project !== 'talk-presentation-tool') return false;
-  return true;
+  return _projects.includes(message.project);
 }

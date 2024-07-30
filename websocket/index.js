@@ -25,12 +25,14 @@ function onMessage(message) {
   try {
     const buffer = Buffer.from(message);
     const stringMessage = buffer.toString();
-    jsonMessage = JSON.parse(stringMessage);  
+    console.log(typeof stringMessage, stringMessage);
+    jsonMessage = JSON.parse(JSON.parse(stringMessage));
   } catch (error) {
     console.log('error parsing the buffer');
   } finally {
     if (isValid(jsonMessage) === false) return;
-    wss.clients.forEach((client) => clientMessage(client, message));  
+    console.log('message sending', typeof jsonMessage, jsonMessage);
+    wss.clients.forEach((client) => clientMessage(client, JSON.stringify(jsonMessage)));
   }
 }
 

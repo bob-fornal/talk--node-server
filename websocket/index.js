@@ -1,23 +1,20 @@
 import { WebSocketServer, WebSocket } from 'ws';
 
-const wss = new WebSocketServer({ noServer: true });
-
+let wss;
 let _projects;
-export default function init(httpServer, projects) {
-  _projects = projects;
-  wss.on('connection', connection);
 
-  httpServer.on('upgrade', (req, socket, head) => {
-    wss.handleUpgrade(req, socket, head, (ws) => {
-      wss.emit('connection', ws, req);
-    });
-  });
+export default function init(httpServer, projects) {
+  wss = new WebSocketServer({ server: httpServer, path: '/websocket' });
+  _projects = projects;
+
+  wss.on('connection', connection);
 }
 
 function connection(ws) {
   ws.isAlive = true;
   ws.on('pong', heartbeat);
   ws.on('message', onMessage);
+  wss.on('close', onClose);
 }
 
 function onMessage(message) {
@@ -26,7 +23,7 @@ function onMessage(message) {
     const buffer = Buffer.from(message);
     const stringMessage = buffer.toString();
     console.log(typeof stringMessage, stringMessage);
-    jsonMessage = JSON.parse(JSON.parse(stringMessage));
+    jsonMessage = JSON.parse(stringMessage);
   } catch (error) {
     console.log('error parsing the buffer');
   } finally {
@@ -34,6 +31,10 @@ function onMessage(message) {
     console.log('message sending', typeof jsonMessage, jsonMessage);
     wss.clients.forEach((client) => clientMessage(client, JSON.stringify(jsonMessage)));
   }
+}
+
+function onClose() {
+  clearInterval(interval);
 }
 
 function clientMessage(client, message) {
@@ -54,10 +55,6 @@ const interval = setInterval(function ping() {
     ws.ping();
   });
 }, 30000);
-
-wss.on('close', function() {
-  clearInterval(interval);
-});
 
 function isValid(message) {
   if (message.hasOwnProperty('type') === false) return false;

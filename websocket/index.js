@@ -3,9 +3,9 @@ import { WebSocketServer, WebSocket } from 'ws';
 let wss;
 let _projects;
 
-export default function init(httpServer, projects) {
+export default function init(server, projects) {
   wss = new WebSocketServer({
-    port: 8080,
+    server,
     path: '/websocket'
   });
   _projects = projects;

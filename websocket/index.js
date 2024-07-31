@@ -57,6 +57,7 @@ const interval = setInterval(function ping() {
 }, 30000);
 
 function isValid(message) {
+  console.log(typeof message, message);
   if (message.hasOwnProperty('type') === false) return false;
   if (message.hasOwnProperty('project') === false) return false;
   return _projects.includes(message.project);

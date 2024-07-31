@@ -4,7 +4,10 @@ let wss;
 let _projects;
 
 export default function init(httpServer, projects) {
-  wss = new WebSocketServer({ server: httpServer, path: '/websocket' });
+  wss = new WebSocketServer({
+    port: 8080,
+    path: '/websocket'
+  });
   _projects = projects;
 
   wss.on('connection', connection);
@@ -14,7 +17,7 @@ function connection(ws) {
   ws.isAlive = true;
   ws.on('pong', heartbeat);
   ws.on('message', onMessage);
-  wss.on('close', onClose);
+  ws.on('close', onClose);
 }
 
 function onMessage(message) {
